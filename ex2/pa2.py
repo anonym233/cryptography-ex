@@ -17,21 +17,23 @@ ciphertext3 = ('69dda8455c7dd4254bf353b773304eec0ec7702330098ce7f7520d1cbbb20fc3
 key4 = '36f18357be4dbd77f050515c73fcf9f2'.decode('hex')
 ciphertext4 = ('770b80259ec33beb2561358a9f2dc617e46218c0a53cbeca695ae45faa8952aa'
                '0e311bde9d4e01726d3184c34451').decode('hex')
-#调用CBC与CTR    
+#璋冪敤CBC涓嶤TR    
 def aes_decrypt_cbc_pc(ciphertext, key):
     block_len = len(key)
     IV = ciphertext[0:block_len]
     
     c = AES.new(key, mode=AES.MODE_CBC, IV=IV)
     return c.decrypt(ciphertext)[block_len:]
-    
+    M=c.decrypt(ciphertext)[block_len:]
+    padding = int((hexlify(M[len(M)-1])), 16)
+    return M[:(len(M)-padding)]
 def aes_decrypt_ctr_pc(ciphertext, key):
     block_len = len(key)
     IV = ciphertext[0:block_len]
     counter = int(IV.encode('hex'), 16)
     c = AES.new(key, mode=AES.MODE_CTR, counter=Counter.new(128, initial_value=counter))
     return c.decrypt(ciphertext[block_len:])
-#自写
+#鑷啓
 def strxor(a, b):     # xor two strings of different lengths
     if len(a) > len(b):
         return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a[:len(b)], b)])
@@ -48,8 +50,9 @@ def aes_decrypt_cbc(ciphertext, key):
         decrypted = c.decrypt(ciphertext_block)
         message_blocks.append(strxor(decrypted, IV))
         IV = ciphertext_block
-        
-    return ''.join(message_blocks)
+    M= ''.join(message_blocks)
+    padding = int((hexlify(M[len(M)-1])), 16)
+    return M[:(len(M)-padding)]
      
     
 def aes_decrypt_ctr(ciphertext, key):
@@ -67,11 +70,11 @@ def aes_decrypt_ctr(ciphertext, key):
     
 def main():
 
-    print 'CBC(调用):%s' % aes_decrypt_cbc_pc(ciphertext1, key1)
-    print 'CBC(调用):%s' % aes_decrypt_cbc_pc(ciphertext2, key2)
+    print 'CBC(璋冪敤):%s' % aes_decrypt_cbc_pc(ciphertext1, key1)
+    print 'CBC(璋冪敤):%s' % aes_decrypt_cbc_pc(ciphertext2, key2)
 
-    print 'CTR(调用):%s' % aes_decrypt_ctr_pc(ciphertext3, key3)
-    print 'CTR(调用):%s' % aes_decrypt_ctr_pc(ciphertext4, key4)
+    print 'CTR(璋冪敤):%s' % aes_decrypt_ctr_pc(ciphertext3, key3)
+    print 'CTR(璋冪敤):%s' % aes_decrypt_ctr_pc(ciphertext4, key4)
 
     print 'CBC:%s' % aes_decrypt_cbc(ciphertext1, key1)
     print 'CBC:%s' % aes_decrypt_cbc(ciphertext2, key2)
