@@ -23,7 +23,6 @@ def aes_decrypt_cbc_pc(ciphertext, key):
     IV = ciphertext[0:block_len]
     
     c = AES.new(key, mode=AES.MODE_CBC, IV=IV)
-    return c.decrypt(ciphertext)[block_len:]
     M=c.decrypt(ciphertext)[block_len:]
     padding = int((hexlify(M[len(M)-1])), 16)
     return M[:(len(M)-padding)]
