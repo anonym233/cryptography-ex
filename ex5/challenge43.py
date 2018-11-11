@@ -43,4 +43,4 @@ if __name__ == '__main__':
     
     k, priv = bruteForceKey(H, r, s, pub, 0, 2**16)
     expectedHashPriv = 0x0954edd5e0afe5542a4adf012611a91912a3ec16
-    print k, priv
+    print (k, priv)
