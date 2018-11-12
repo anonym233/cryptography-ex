@@ -3,12 +3,22 @@ import challenge43
 import itertools
 import re
 import hashlib
+
 def hash(message):
     sha1 = hashlib.sha1()
     sha1.update(message)
     digest = sha1.digest()
     return int.from_bytes(digest, byteorder='big')
-
+def verifySignatureHash(H, signature, pub):
+    (r, s) = signature
+    (p, q, g, y) = pub
+    if r <= 0 or r >= q or s <= 0 or s >= q:
+        return False
+    w = challenge43.invmod(s, q)
+    u1 = (H * w) % q
+    u2 = (r * w) % q
+    v = ((pow(g, u1, p) * pow(y, u2, p)) % p) % q
+    return v == r
 def getMessage(messageLines):
     msg = re.match('^msg: (.*)', messageLines[0]).group(1).encode('ascii')
     m = int(re.match('^m: (.*)', messageLines[3]).group(1), 16)
@@ -58,6 +68,6 @@ if __name__ == '__main__':
         raise Exception(str(hashPriv) + ' != ' + str(expectedHashPriv))
     for msg in messages:
         (_, s, r, m) = msg
-        if not challenge43.verifySignatureHash(m, (r, s), pub):
+        if not verifySignatureHash(m, (r, s), pub):
             raise Exception('unexpected')
     print (k,priv)
