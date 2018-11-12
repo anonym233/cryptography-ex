@@ -1,6 +1,8 @@
+#python3.6
 from random import random
 import binascii
 import hashlib
+
 def invmod(a, n):
     t = 0
     newt = 1
@@ -22,7 +24,7 @@ def areValidKeys(pub, priv):
     return y == pow(g, x, p)
 def extractKey(H, r, s, k, pub):
     (p, q, g, y) = pub
-    rInv = invmod(r, q)
+    rInv = invmod(r,q)
     return (rInv * (s * k - H)) % q
 def bruteForceKey(H, r, s, pub, kMin, kMax):
     for k in range(kMin, kMax):
